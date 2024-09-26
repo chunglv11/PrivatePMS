@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewBag.Title = "TestButtonPaypal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<link href="~/Content/Css/CssRegister.css" rel="stylesheet" />
+
+<div class="background-register">
+    <img style="width:100%" src="/Content/Img/shadow-2.png" class="img-r">
+    <div class="container">
+        <div class="row">
+            <div class="register-home">
+                <div class="register-home-title text-center col-md-12">
+                    <h1>Bắt đầu 14 ngày miễn phí tạo và dùng thử phần mềm</h1>
+                    <h5>
+                        @*Ngay sau khi nhận được thông tin đăng ký, chúng tôi sẽ liên hệ trực tiếp với bạn để cấu hình tài khoản dùng thử*@
+                        Không hợp đồng, không rủi ro, hoàn toàn miễn phí
+                    </h5>
+                    <p class="text-center" style="color:red; font-weight: bold">
+                        @ViewBag.Message
+                    </p>
+                </div>
+                <div class="r-register col-md-10 col-md-offset-1">
+                    @Html.ValidationSummary(true)
+
+                    <form id="bitrix_form" class="contact-form" action="/home/index" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="fa fa-user"></i>
+                                    <input id="bt_name" type="text" name="FullName" class="form-control" placeholder="Họ và tên">
+                                    @Html.ValidationMessageFor(p => p.FullName)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="fa fa-envelope"></i>
+                                    <input id="bt_email" type="email" name="Email" class="form-control" placeholder="Email">
+                                    @Html.ValidationMessageFor(p => p.Email)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="fa fa-phone" aria-hidden="true"></i>
+                                    <input id="bt_phone" type="text" name="Phone" class="form-control" placeholder="Điện thoại">
+                                    @Html.ValidationMessageFor(p => p.Phone)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="fa fa-building"></i>
+                                    <input id="bt_hotel_name" type="text" name="NameHotel" class="form-control" placeholder="Tên khách sạn">
+                                    @Html.ValidationMessageFor(p => p.NameHotel)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="glyphicon glyphicon-bed"></i>
+                                    <select id="bt_hotel_type" class="form-control" name="HotelType">
+                                        <option value="">Quy mô khách sạn</option>
+                                        <option value="Khách sạn 0-2 sao">Khách sạn 0-2 sao</option>
+                                        <option value="Khách sạn 3-5 sao">Khách sạn 3-5 sao</option>
+                                        <option value="Homestay & Hostel">Homestay &amp; Hostel</option>
+                                        <option value="Villa & Apartment">Villa &amp; Apartment</option>
+                                        <option value="Khách sạn nghỉ giờ">Khách sạn nghỉ giờ</option>
+                                    </select>
+                                    @Html.ValidationMessageFor(p => p.HotelType)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <i class="fa fa-map-marker"></i>
+                                <div class="form-group">
+                                    <input id="bt_city" type="text" class="form-control" placeholder="Địa chỉ" name="Address">
+                                    @Html.ValidationMessageFor(p => p.Address)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="fa fa-globe" aria-hidden="true"></i>
+                                    <select id="bt_country" class="form-control" name="type">
+                                        <option value="">Chọn phần mềm bạn muốn sử dụng</option>
+                                        <option value="1">Phần mềm quản lý khách sạn</option>
+                                        <option value="2">Hotel booking engine(phí theo tháng)</option>
+                                        <option value="3">Hotel booking engine(phí theo 5% đặt phòng)</option>
+                                        <option value="-1">PMS & BE</option>
+                                    </select>
+                                    @Html.ValidationMessageFor(p => p.type)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <i class="fa fa-bed"></i>
+                                    <input id="bt_quantity_room" type="number" name="NumberRoom" class="form-control" placeholder="Số phòng/số giường">
+                                    @Html.ValidationMessageFor(p => p.NumberRoom)
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                                <i class="fa fa-pencil-square-o message-icon"></i>
+                                <textarea id="bt_respons" class="form-control" rows="3" placeholder="Thông điệp"></textarea>
+                            </div>*@
+                        <button id="idbtnsubmit" type="submit" class="btn btn-success" onclick="LoadingSendEmail()">Đăng ký dùng thử</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="wraploadding">
+    <div id="imgloadding">
+        <img src="/Areas/Administrator/Content/img/ajax-loader.gif" alt="loading">
+        <p style="text-align: center; font-weight: bold">Xin vui lòng đợi chút, hệ thống đang được cài đặt...</p>
+    </div>
+</div>
+
+<script>
+    function LoadingSendEmail() {
+        $("#wraploadding").show();
+        $("#wraploadding").css("width", $(window).width());
+        $("#wraploadding").css("height", $(window).height());
+        $("#imgloadding ").css("top", ($(window).height() / 2) - 80);
+    }
+</script>

@@ -1,0 +1,22 @@
+Ngoc Tu Hotel
+qitp7u7k
+
+
+update proc
+
+ALTER PROC [WebCongTy_pmasiky].[GroupHotel_Put]
+@GroupHotelId	 INT,
+@Code  NVARCHAR(10)
+AS
+BEGIN
+	IF EXISTS(SELECT * FROM dbo.GroupHotel WHERE Code = @Code AND GroupHotelId != @GroupHotelId )
+		BEGIN
+			UPDATE dbo.GroupHotel SET Code = ISNULL(@Code,Code)
+			WHERE GroupHotelId = @GroupHotelId
+			SELECT 1;
+			RETURN
+		END
+	SELECT -1
+END
+
+GO
