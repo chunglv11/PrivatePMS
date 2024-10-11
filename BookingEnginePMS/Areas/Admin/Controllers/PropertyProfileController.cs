@@ -165,7 +165,20 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
                                 LanguageId = x.LanguageId,
                                 Terms = x.Terms,
                                 InforAccount = x.InforAccount,
-                                Note = x.Note
+                                Note = x.Note,
+                                Name = x.Name,
+                                Code = x.Code,
+                                Logo = x.Logo,
+                                Phone = x.Phone,
+                                Hotline = x.Hotline,
+                                Fax = x.Fax,
+                                Email = x.Email,
+                                Address = x.Address,
+                                Facebook = x.Facebook,
+                                Skyper = x.Skyper,
+                                Google = x.Google,
+                                Youtube = x.Youtube,
+                                Website = x.Website
                             }, commandType: CommandType.StoredProcedure,
                             transaction: transaction);
                         });
@@ -245,7 +258,21 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
                                     LanguageId = x.LanguageId,
                                     Terms = x.Terms,
                                     InforAccount = x.InforAccount,
-                                    Note = x.Note
+                                    Note = x.Note,
+                                    Name = x.Name,
+                                    Code = x.Code,
+                                    Logo = x.Logo,
+                                    Phone = x.Phone,
+                                    Hotline = x.Hotline,
+                                    Fax = x.Fax,
+                                    Email = x.Email,
+                                    Address = x.Address,
+                                    Facebook = x.Facebook,
+                                    Skyper = x.Skyper,
+                                    Google = x.Google,
+                                    Youtube = x.Youtube,
+                                    Website = x.Website,
+
                                 }, commandType: CommandType.StoredProcedure,
                                 transaction: transaction);
                             }
@@ -258,7 +285,20 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
                                     LanguageId = x.LanguageId,
                                     Terms = x.Terms,
                                     InforAccount = x.InforAccount,
-                                    Note = x.Note
+                                    Note = x.Note,
+                                    Name = x.Name,
+                                    Code = x.Code,
+                                    Logo = x.Logo,
+                                    Phone = x.Phone,
+                                    Hotline = x.Hotline,
+                                    Fax = x.Fax,
+                                    Email = x.Email,
+                                    Address = x.Address,
+                                    Facebook = x.Facebook,
+                                    Skyper = x.Skyper,
+                                    Google = x.Google,
+                                    Youtube = x.Youtube,
+                                    Website = x.Website,
                                 }, commandType: CommandType.StoredProcedure,
                                 transaction: transaction);
                             }

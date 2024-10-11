@@ -152,6 +152,7 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
         public float ServicePrice { get; set; }
         public float ExtrabedPrice { get; set; }
         public DateTime DateCreate { get; set; }
+        public int StatusBooking { get; set; }
     }
     #endregion
     public class ReservationController : SercurityController

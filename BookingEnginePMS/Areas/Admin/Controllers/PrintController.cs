@@ -457,10 +457,12 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
                         float.TryParse(taxFeesArray[1], out feeService);
                     }
                 }
-                float TotalFees = 0;
                 if (bookings is null)
                     bookings = new List<Booking_Reservation>();
-                bookings.ForEach(x =>
+                float totalFeeService = 0;
+                float totalTax = 0;
+                float sumRES = 0;
+                bookings.Where(x=>x.Status != 5 && x.Status !=3).ToList().ForEach(x =>
                 {
                     float taxFeesForBooking = 0;
                     float taxfeeServiceForBooking = 0;
@@ -482,10 +484,18 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
                         ViewBag.taxFees = taxFeesForBooking;
                         ViewBag.feeService = feeService;
                         float totalAmount = (x.TotalRoom + x.TotalExtrabed + x.TotalService) * (1 - x.Discount / 100.0f) * (1 + taxFeesForBooking / 100.0f) * (1 + taxfeeServiceForBooking / 100.0f);
-                        var total = (x.TotalRoom + x.TotalExtrabed + x.TotalService) * (100 - x.Discount);            
+                        var total = (x.TotalRoom + x.TotalExtrabed + x.TotalService) * (1 - x.Discount / 100.0f);            
                         //mới, thêm totalfee
-                        x.TotalFee = total * (taxfeeServiceForBooking + taxFeesForBooking + taxfeeServiceForBooking * taxFeesForBooking / 100) / 10000;
-                        ViewBag.total = TotalFees;
+                        //x.TotalFee = total * (taxfeeServiceForBooking + taxFeesForBooking + taxfeeServiceForBooking * taxFeesForBooking / 100) / 10000;
+                        //tổng tiền phòng, giường, dịch vụ cho tất cả booking
+                         sumRES+= total;
+                        //phí service change
+                        // Tính tổng phí dịch vụ cho từng booking     
+                        float sumService = total * (taxfeeServiceForBooking /100);                      
+                        // Cộng dồn vào tổng phí dịch vụ cho tất cả các bookings
+                        totalFeeService += sumService;
+                        //tính thuế vat
+                        totalTax =  (sumRES + totalFeeService) * (taxFeesForBooking / 100);                    
                         x.Total = (float)Math.Round(totalAmount, 0);
                         //x.Total = (float)Math.Round((x.TotalRoom + x.TotalExtrabed + x.TotalService) * (100 - x.Discount) * (100 + taxFeesForBooking) / 10000, 0);
                         //Sửa bỏ cộng tiền dịch vụ(21/8/24)
@@ -493,6 +503,9 @@ namespace BookingEnginePMS.Areas.Admin.Controllers
                         
                     }
                 });
+                ViewBag.TotalFeeServiceSum = totalFeeService;
+                ViewBag.TotalTax = totalTax;
+                ViewBag.VAT = vat;
                 ViewData["hotel"] = hotel;
                 ViewData["booking"] = bookings;
                 return View();

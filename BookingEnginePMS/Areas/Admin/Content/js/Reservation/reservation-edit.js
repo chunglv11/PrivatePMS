@@ -191,6 +191,16 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
             });
         }
         $scope.PutService = function () {
+             // Kiểm tra nếu có bất kỳ dịch vụ nào chưa chọn phòng (BookingId = -1)
+            var invalidService = $scope.serviceChoose.some(function (service) {
+                return service.BookingId === -1;
+            });
+
+            // Nếu có dịch vụ với BookingId = -1, thông báo và dừng hàm
+            if (invalidService) {
+                notify.error("Vui lòng chọn phòng cho tất cả các dịch vụ.");
+                return;
+            }
             $("#loader").css("display", "block")
             $http({
                 url: urlPutService,

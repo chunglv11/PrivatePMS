@@ -10,6 +10,13 @@
     var Notebookings = (List<ReservationNote>)ViewData["Note"];
     var BookingService = (List<BookingService_Resrvation>)ViewData["NameService"];
 }
+<style>
+    .table-infoBill th, .table-infoBill td {
+        /*border: 1px solid #007BFF;*/
+      
+    }
+</style>
+
 <div class="uk-grid" id="ConfirmRoom">
     <div class="uk-width-1 uk-margin-bottom">
         <div class="uk-grid">
@@ -39,126 +46,100 @@
         <div class="uk-grid">
             <div class="uk-width-1 uk-text-center uk-margin-bottom">
                 <h3 style="margin-bottom: 0;"><b>HÓA ĐƠN/ INVOICE </b></h3>
-                <h6 style="margin-top: 0;" class="ng-binding">Mã hóa đơn/ Code: IVANGR@(reservation.ReservationId)</h6>
+                <h6 style="margin-top: 0;" class="ng-binding">Mã hóa đơn/ Code: @(reservation.ReservationId)</h6>
             </div>
         </div>
     </div>
-    <div class="uk-width-1-2 infoCustomer">
-        <div class="uk-grid uk-margin-small-bottom">
-            <div class="uk-width-1-2">
-                <span>Reminiscent Name </span>
-            </div>
-            <div class="uk-width-1-2">
-                <b>@reservation.ReminiscentName</b>
-            </div>
-        </div>
-        <div class="uk-grid uk-margin-small-bottom">
-            <div class="uk-width-1-2">
-                <span>Khách hàng/ Guest </span>
-            </div>
-            <div class="uk-width-1-2">
-                <b>@guest.SurName @guest.FirstName </b>
-            </div>
-        </div>
-        <div class="uk-grid uk-margin-small-bottom">
-            <div class="uk-width-1-2">
-                <span>Điện thoại/ Phone </span>
-            </div>
-            <div class="uk-width-1-2">
-                <b>@guest.Phone </b>
-            </div>
-        </div>
-    </div>
-    <div class="uk-width-1-2">
-        <div class="uk-grid uk-margin-small-bottom">
-            <div class="uk-width-3-5">
-                <span>Arrival Flight Date</span>
-            </div>
-            <div class="uk-width-2-5">
-                <b>@reservation.ArrivalFlightDate, @reservation.ArrivalFlightTime</b>
-            </div>
-        </div>
-        <div class="uk-grid uk-margin-small-bottom">
-            <div class="uk-width-3-5">
-                <span>Departure Flight Date</span>
-            </div>
-            <div class="uk-width-2-5">
-                <b>@reservation.DepartureFlightDate, @reservation.DepartureFlightTime</b>
-            </div>
-        </div>
-        <div class="uk-grid uk-margin-small-bottom">
-            <div class="uk-width-1-2">
-                <span>Đại lý/ Agency </span>
-            </div>
-            <div class="uk-width-1-2">
-                <b>@CompanyName </b>
-            </div>
-        </div>
-    </div>
+
     <div class="uk-width-1 uk-margin-top uk-margin-small-bottom">
         <div>
             <table class="uk-table uk-table-nowrap table-lst table-infoBill">
                 <thead>
                     <tr>
-                        <th>Folio</th>
+                        <th>Khách hàng/Guest</th>
+                        <td colspan="2">@guest.SurName @guest.FirstName</td>
+                        <th>Checkin</th>
+                        <td colspan="2">@bookings.Min(c => c.ArrivalDate).ToString("dd/MM/yyyy HH:mm")</td>
+                        <th>Checkout</th>
+                        <td colspan="2">@bookings.Max(c => c.DepartureDate).ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                    <tr>
+                        <th>Điện thoại/Phone</th>
+                        <td colspan="2">@guest.Phone</td>
+                        <th>Email</th>
+                        <td colspan="2">@guest.Email</td>
+                        <th>Đại lý/Agency</th>
+                        <td>@CompanyName</td>
+                        @*<th>Đặt theo/Type</th>
+                            <td colspan="2"></td>*@
+                    </tr>
+                </thead>
+
+            </table>
+        </div>
+    </div>
+
+    <strong>Giá phòng/Rooms & Rates</strong>
+    <div class="uk-width-1 uk-margin-top uk-margin-small-bottom">
+        <div>
+            <table class="uk-table uk-table-nowrap table-lst table-infoBill">
+                <thead>
+                    <tr>
+                        <th>Mã đặt phòng/Folio</th>
                         <th>Chỗ ở/ Accommodation</th>
-                        <th>Phòng/ Room</th>
-                        <th>Đặt theo/ Type</th>
-                        <th>Khách/ Guest</th>
-                        <th>Check in</th>
-                        <th>Check out</th>
-                        <th>Tổng/ Total</th>
-                        @*<th>Thanh toán/ Paid</th>*@
-                        @*<th>Còn lại/ Balance</th>*@
+                        <th>Đặt theo/Type</th>
+                        <th>Giường phụ</th>
+                        <th>Giá/Price</th>
+                        <th>Tiền phòng/Room Rate</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in bookings)
-                    {
+                    @{
+                        float totalRoom = 0;
+                        foreach (var item in bookings.Where(c => c.Status != 5 && c.Status != 3))
+                        {
+
+                            float itemTotalR = item.TotalRoom + item.TotalExtrabed;
+                            totalRoom += itemTotalR;
+                            <tr>
+                                <td class="uk-text-center">@item.BookingId</td>
+                                <td>@item.RoomTypeName</td>
+                                <td>@(item.TypeBooking == 0 ? "Ngày/ Day" : "Giờ/ Hour")</td>
+                                <td class="uk-text-center">@item.TotalExtrabed.ToString("N0") ₫</td>
+                                <td class="uk-text-center">@item.TotalRoom.ToString("N0") ₫</td>
+
+                                <td class="uk-text-center">@itemTotalR.ToString("N0") ₫</td>
+
+                            </tr>
+
+                        }
                         <tr>
-                            <td class="uk-text-center">@item.BookingId</td>
-                            <td>@item.RoomTypeName</td>
-                            <td class="uk-text-center">@item.RoomCode</td>
-                            <td class="uk-text-center">@(item.TypeBooking == 0 ? "Ngày/ Day" : "Giờ/ Hour")</td>
-                            <td>@item.GuestName</td>
-                            <td class="uk-text-center">@item.ArrivalDate.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td class="uk-text-center">@item.DepartureDate.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.TotalRoom))</td>
-                            <!-- 13/06/2024 cộng thêm PrePaid  -->
-                            @*<td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.PrePaid + item.Paid))</td>*@
-                            @*<td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.Total))</td>*@
-                            <!-- 13/06/2024 trừ thêm PrePaid  -->
-                            @*<td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.Total - item.PrePaid - item.Paid))</td>*@
-                            @*<td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.Total - item.PrePaid - item.Paid))</td>*@
+                            <td colspan="5" class="uk-text-right">
+                                Tổng tiền phòng/total room rate(1)
+                            </td>
+                            <td class="uk-text-center">
+                                @totalRoom.ToString("N0") ₫
+
+                            </td>
+
                         </tr>
                     }
-                    <!--<tr>
-                    <td colspan="7" class="uk-text-right">
-                        Tổng/ Total
-                    </td>
-                    <td class="uk-text-right">
-                        @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Total)))
-                    </td>-->
-                    <!-- 13/06/2024 cộng thêm PrePaid  -->
-                    <!--<td class="uk-text-right">
-                        @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Paid) + bookings.Sum(x => x.PrePaid)))
-                    </td>-->
-                    <!-- 13/06/2024 trừ thêm PrePaid  -->
-                    <!--<td class="uk-text-right">
-                            @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Total) - bookings.Sum(x => x.Paid) - bookings.Sum(x => x.PrePaid)))
-                        </td>
-                    </tr>-->
 
 
                 </tbody>
 
             </table>
-            @if (BookingService.Count() > 0)
+            <strong>Giá dịch vụ/ Services Fee</strong>
+            @{
+                float totalService = 0;//tổng tiền dịch vụ
+            }
+            @if (BookingService.Where(c => c.StatusBooking != 5 && c.StatusBooking != 3).Count() > 0)
             {
+
                 <table class="uk-table uk-table-nowrap table-lst table-infoBill">
                     <thead>
                         <tr>
-                            <th>Chỗ ở/ Accommodation</th>
+                            <th>Mã đặt phòng/Folio</th>
                             <th>Dịch vụ/ Service</th>
                             <th>Số lượng/ Quantity</th>
                             <th>Giá/ Price</th>
@@ -167,113 +148,131 @@
                     </thead>
                     <tbody>
                         @{
-                            float total = 0;//tổng tiền dịch vụ
+
                             foreach (var item in BookingService)
                             {
 
                                 float itemTotal = item.ServiceNumber * item.ServicePrice; // Tính tổng cho dịch vụ hiện tại
-                                total += itemTotal;
+                                totalService += itemTotal;
                                 <tr>
-                                    <td class="uk-text-center">@item.RoomTypeName</td>
+                                    <td class="uk-text-center">@item.BookingId</td>
                                     <td class="uk-text-center">@item.ServiceName</td>
                                     <td>@item.ServiceNumber</td>
-                                    <td class="uk-text-center">@item.ServicePrice.ToString("N0")</td>
+                                    <td class="uk-text-center">@item.ServicePrice.ToString("N0") ₫</td>
                                     <td class="uk-text-center">@(String.Format("{0:#,0} ₫", itemTotal))</td>
                                 </tr>
                             }
+                            <tr>
+                                <td colspan="4" class="uk-text-right">
+                                    Tổng tiền dịch vụ/total service fee(2)
+                                </td>
+                                <td class="uk-text-center">
+                                    @totalService.ToString("N0") ₫
+                                </td>
+
+                            </tr>
                         }
                     </tbody>
                 </table>
+
+            }
+            else
+            {
                 <table class="uk-table uk-table-nowrap table-lst table-infoBill">
                     <thead>
                         <tr>
-                            <th>Chỗ ở/ Accommodation</th>
-                            <th>Giường phụ/ Extrabed</th>
+                            <th>Mã đặt phòng/Folio</th>
+                            <th>Dịch vụ/ Service</th>
                             <th>Số lượng/ Quantity</th>
                             <th>Giá/ Price</th>
                             <th>Thành tiền/ Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @{
-                            float TotalExtrabed = 0;//tổng tiền dịch vụ
-                            foreach (var item in BookingService)
-                            {
-                                float itemTotal = item.ExtrabedNumber * item.ExtrabedPrice; // Tính tổng cho dịch vụ hiện tại
-                                TotalExtrabed += itemTotal;
-                                <tr>
-                                    <td class="uk-text-center">@item.RoomTypeName</td>
-                                    <td class="uk-text-center">
-                                        @if (!string.IsNullOrEmpty(item.ExtrabedName))
-                                        {
-                                            @item.ExtrabedName
-                                        }
-                                        else
-                                        {
-                                            <span>Không sử dụng</span>
-                                        }
-                                    </td>
-                                    <td>@item.ExtrabedNumber</td>
-                                    <td class="uk-text-center">@item.ExtrabedPrice.ToString("N0")</td>
 
-                                    <td class="uk-text-center">@(String.Format("{0:#,0} ₫", itemTotal))</td>
-                                </tr>
-                            }
-                        }
+                        <tr>
+                            <td class="uk-text-center">Không</td>
+                            <td class="uk-text-center">Không sử dụng</td>
+                            <td>0</td>
+                            <td class="uk-text-center">0 ₫</td>
+                            <td class="uk-text-center">0 ₫ </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="4" class="uk-text-right">
+                                Tổng tiền dịch vụ/total service fee(2)
+                            </td>
+                            <td class="uk-text-center">
+                                0 ₫
+                            </td>
+
+                        </tr>
+
                     </tbody>
                 </table>
             }
-            <table class="uk-table uk-table-nowrap table-lst table-infoBill">
-                <thead>
-                    <tr>
-                        <th>Chỗ ở/ Accommodation</th>
-                        <th>Tiền phòng/ TotalRoom</th>
-                        <th>Tiền dịch vụ/ TotalService</th>
-                        <th>Tiền giường/ TotalExtrabed</th>
-                        <th>VAT</th>
-                        <th>Tổng/ Total</th>
-                        <th>Thanh toán/ Paid</th>
-                        <th>Còn lại/ Balance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in bookings)
-                    {
+            @{
+                <table class="uk-table uk-table-nowrap table-lst table-infoBill">
+
+                    <tbody>
+
                         <tr>
-                            <td class="uk-text-center">@item.RoomTypeName</td>
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.TotalRoom))</td>
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.TotalService))</td>
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.TotalExtrabed))</td>
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.TotalFee))</td>
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.Total))</td>
-                            <!-- 13/06/2024 cộng thêm PrePaid  -->
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.PrePaid + item.Paid))</td>
-                            <!-- 13/06/2024 trừ thêm PrePaid  -->
-                            <td class="uk-text-right">@(String.Format("{0:#,0} ₫", item.Total - item.PrePaid - item.Paid))</td>
+                            <td colspan="4" class="uk-text-right">
+                                Tổng tiền dịch vụ/Total Room & Services (3)=(1)+(2)
+                            </td>
+                            <td class="uk-text-center">
+                                @{
+                                    float total = totalRoom + totalService;
+                                }
+                                @total.ToString("N0") ₫
+                            </td>
+
                         </tr>
-                    }
+                        <tr>
+                            <td colspan="4" class="uk-text-right">
+                                Phí/Service charge(4)
+                            </td>
+                            <td class="uk-text-center">
+                                @(String.Format("{0:#,0} ₫", ViewBag.TotalFeeServiceSum))
+                            </td>
 
-                    <tr>
-                        <td colspan="5" class="uk-text-right">
-                            Tổng/ Total
-                        </td>
-                        <td class="uk-text-right">
-                            @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Total)))
-                        </td>
-                        <!-- 13/06/2024 cộng thêm PrePaid  -->
-                        <td class="uk-text-right">
-                            @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Paid) + bookings.Sum(x => x.PrePaid)))
-                        </td>
-                        <!-- 13/06/2024 trừ thêm PrePaid  -->
-                        <td class="uk-text-right">
-                            @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Total) - bookings.Sum(x => x.Paid) - bookings.Sum(x => x.PrePaid)))
-                        </td>
-                    </tr>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="uk-text-right">
+                                Thuế/VAT(5)=((3)+(4))*[@ViewBag.VAT %]
+                            </td>
+                            <td class="uk-text-center">
+                                @(String.Format("{0:#,0} ₫", ViewBag.TotalTax))
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="uk-text-right">
+                                Tổng/Total(6)=(3)+(4)+(5)
+                            </td>
+                            <td class="uk-text-center">
+                                @bookings.Sum(c => c.Total).ToString("N0") ₫
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="uk-text-right">
+                                Đã thanh toán/Paid(7)
+                            </td>
+                            <td class="uk-text-center">
+                                @(String.Format("{0:#,0} ₫", bookings.Sum(x => x.Paid) + bookings.Sum(x => x.PrePaid)))
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="uk-text-right">
+                                Số tiền còn lại/ The balance payment(8)=(6)-(7)
+                            </td>
+                            <td class="uk-text-center">
 
-
-                </tbody>
-
-            </table>
+                                @(String.Format("{0:#,0} ₫", bookings.Sum(c => c.Total) - bookings.Sum(c => c.Paid) - bookings.Sum(c => c.PrePaid)))
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
             @if (Notebookings.Count() > 0)
             {
                 <p>Ghi chú /Note: @Notebookings.First().Note</p>
