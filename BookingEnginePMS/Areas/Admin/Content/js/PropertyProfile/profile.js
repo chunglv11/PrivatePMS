@@ -58,7 +58,7 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 objOld.Google = document.getElementById('Google').value;
                 objOld.Youtube = document.getElementById('Youtube').value;
                 objOld.Website = document.getElementById('Website').value;
-                objOld.Logo = document.getElementById('img-logo').value;
+                objOld.Logo = document.getElementById('img-logo').src;
                 $scope.hotel.Logo = objOld.Logo;
             }
         }
@@ -84,7 +84,7 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 document.getElementById('Google').value = objNew.Google || '';
                 document.getElementById('Youtube').value = objNew.Youtube || '';
                 document.getElementById('Website').value = objNew.Website || '';
-                document.getElementById('img-logo').value = objNew.Logo || '';
+                document.getElementById('img-logo').src = objNew.Logo || '';
                 $scope.hotel.Logo = objNew.Logo;
             }
         }
@@ -163,11 +163,12 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                     $scope.languageChoose = 0;
                 }, 500);
 
-                var idLanguageChoose = $scope.language[0].LanguageId
-                $timeout(function () {
-                    $scope.SetAdditionInfoMultiLanguage(idLanguageChoose);
-                }, 500);
-                $scope.languageChoose = idLanguageChoose
+                //bỏ bên dưới là thông tin đổi theo được trời ơiiii
+                //var idLanguageChoose = $scope.language[0].LanguageId
+                //$timeout(function () {
+                //    $scope.SetAdditionInfoMultiLanguage(idLanguageChoose);
+                //}, 500);
+                //$scope.languageChoose = idLanguageChoose
             }, function error(response) {
                 $("#loader").css("display", "none")
             });
