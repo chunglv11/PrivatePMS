@@ -3110,7 +3110,7 @@ namespace BookingEnginePMS.Controllers
             //}
             if (allDataBook.guest.TypePaymentMethod != 13 && allDataBook.guest.TypePaymentMethod != 14 && allDataBook.guest.TypePaymentMethod != 18)
             {
-                template.Content = template.Content.Replace("[Status]", "Confirm");
+                template.Content = template.Content.Replace("[Status]", "Confirmed");
             }
             else
             {
