@@ -2861,7 +2861,7 @@ namespace BookingEnginePMS.Controllers
                     if (reservationEmailSent != null)
                     {
                         //sửa 20-9-24
-                        var content = reservationEmailSent.Content.Replace("[Status]", "Paid");
+                        var content = reservationEmailSent.Content.Replace("[Status]", "Confirmed");
                         MailHelper.SendMailGuest(configEmail, allDataBook.guest.Email, reservationEmailSent.Subject + " " + allDataBook.Reference_Number, content,
                                        template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());
                     }
@@ -3108,17 +3108,21 @@ namespace BookingEnginePMS.Controllers
             //    MailHelper.SendMailGuest(configEmail, allDataBook.guest.Email, template.Subject, template.Content,
             //                    template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());
             //}
+
             if (allDataBook.guest.TypePaymentMethod != 13 && allDataBook.guest.TypePaymentMethod != 14 && allDataBook.guest.TypePaymentMethod != 18)
             {
                 template.Content = template.Content.Replace("[Status]", "Confirmed");
+                MailHelper.SendMailGuest(configEmail, allDataBook.guest.Email, template.Subject, template.Content,
+                           template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());
+                MailHelper.SendMailToHotel(configEmail, template.Content, allDataBook.guest.TypePaymentMethodName);
             }
             else
             {
                 template.Content = template.Content.Replace("[Status]", "Pending");
+               
+                MailHelper.SendMailToHotel(configEmail, template.Content, allDataBook.guest.TypePaymentMethodName);
             }
-            MailHelper.SendMailGuest(configEmail, allDataBook.guest.Email, template.Subject, template.Content,
-                            template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());
-            MailHelper.SendMailToHotel(configEmail, template.Content, allDataBook.guest.TypePaymentMethodName);
+           
 
         }
         //public static string[] keyTemplate = new string[] {
