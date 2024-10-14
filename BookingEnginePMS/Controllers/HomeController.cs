@@ -643,8 +643,8 @@ namespace BookingEnginePMS.Controllers
 
             }
            
-            Thread thread = new Thread(SendErrorEmailPayOnline);
-            thread.Start(allDataBook);
+            //Thread thread = new Thread(SendErrorEmailPayOnline);
+            //thread.Start(allDataBook);
             return View();
         }
         #region API
@@ -2863,7 +2863,8 @@ namespace BookingEnginePMS.Controllers
                         //sửa 20-9-24
                         var content = reservationEmailSent.Content.Replace("[Status]", "Confirmed");
                         MailHelper.SendMailGuest(configEmail, allDataBook.guest.Email, reservationEmailSent.Subject + " " + allDataBook.Reference_Number, content,
-                                       template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());
+                                       template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());     
+                        MailHelper.SendMailToHotel(configEmail, template.Content, allDataBook.guest.TypePaymentMethodName);
                     }
                 }
             }
