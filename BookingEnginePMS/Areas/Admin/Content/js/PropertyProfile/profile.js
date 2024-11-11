@@ -19,7 +19,19 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 return
             }
             $("#loader").css("display", "block")
-            $scope.hotel.Logo = $("#Logo").val();
+            //$scope.hotel.Logo = $("#Logo").val();
+            // Xử lý logo cho ngôn ngữ hiện tại
+            const currentLanguageId = $scope.languageChoose;
+            if (currentLanguageId === 0) {
+                // Nếu là ngôn ngữ mặc định
+                $scope.hotel.Logo = document.getElementById('img-logo').src;
+            } else {
+                // Lưu lại logo của ngôn ngữ hiện tại vào `hotelLanguages`
+                var currentLangObj = $scope.hotel.hotelLanguages.find(x => x.LanguageId === currentLanguageId);
+                if (currentLangObj) {
+                    currentLangObj.Logo = document.getElementById('img-logo').src;
+                }
+            }
             $scope.GetAdditionInfoMultiLanguage()
             $http({
                 method: "POST",
@@ -59,7 +71,6 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 objOld.Youtube = document.getElementById('Youtube').value;
                 objOld.Website = document.getElementById('Website').value;
                 objOld.Logo = document.getElementById('img-logo').src;
-                $scope.hotel.Logo = objOld.Logo;
             }
         }
         $scope.SetAdditionInfoMultiLanguage = function (index) {
@@ -85,7 +96,6 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 document.getElementById('Youtube').value = objNew.Youtube || '';
                 document.getElementById('Website').value = objNew.Website || '';
                 document.getElementById('img-logo').src = objNew.Logo || '';
-                $scope.hotel.Logo = objNew.Logo;
             }
         }
         $scope.ResetEditor = function () {
@@ -93,23 +103,64 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
             CKEDITOR.instances.infoAccountHotel.setData('')
             CKEDITOR.instances.noteHotel.setData('')
         }
+        //$scope.$watch('languageChoose', function (newValue, oldValue) {
+        //    if (isNaN(newValue) || newValue == 0) {
+        //        // Nếu là ngôn ngữ mặc định
+        //        $(".hotel_inhidden").show();  // Hiển thị các input có class 'hotel_inhidden'
+        //        $(".hotel_hidden").hide();    // Ẩn các input có class 'hotel_hidden'
+        //        // Khôi phục logo mặc định
+        //        // Khôi phục logo mặc định nếu $scope.hotel đã được khởi tạo
+        //        if ($scope.hotel) {
+        //            $scope.hotel.Logo = $scope.defaultLogo;
+        //        }
+        //        document.getElementById('img-logo').src = $scope.defaultLogo;
+        //    } else {
+        //        // Nếu là ngôn ngữ khác
+        //        $(".hotel_inhidden").hide();  // Ẩn các input có class 'hotel_inhidden'
+        //        $(".hotel_hidden").show();    // Hiển thị các input có class 'hotel_hidden'
+        //    }
+        //    if (newValue < 0)
+        //        return
+        //    if (oldValue > 0)
+        //        $scope.GetAdditionInfoMultiLanguage(oldValue)
+        //    $scope.SetAdditionInfoMultiLanguage(newValue)
+        //});
         $scope.$watch('languageChoose', function (newValue, oldValue) {
+            console.log("Ngôn ngữ mới được chọn:", newValue);
+            console.log("Ngôn ngữ trước đó:", oldValue);
+
             if (isNaN(newValue) || newValue == 0) {
-                // Nếu là ngôn ngữ mặc định
-                $(".hotel_inhidden").show();  // Hiển thị các input có class 'hotel_inhidden'
-                $(".hotel_hidden").hide();    // Ẩn các input có class 'hotel_hidden'
+                // Ngôn ngữ mặc định
+                console.log("Chuyển về ngôn ngữ mặc định.");
+                $(".hotel_inhidden").show();
+                $(".hotel_hidden").hide();
+
+                // Khôi phục logo mặc định nếu `$scope.hotel` đã được khởi tạo
+                if ($scope.hotel) {
+                    $scope.hotel.Logo = $scope.defaultLogo;
+                    console.log("Khôi phục logo mặc định:", $scope.defaultLogo);
+                }
+                document.getElementById('img-logo').src = $scope.defaultLogo;
             } else {
-                // Nếu là ngôn ngữ khác
-                $(".hotel_inhidden").hide();  // Ẩn các input có class 'hotel_inhidden'
-                $(".hotel_hidden").show();    // Hiển thị các input có class 'hotel_hidden'
+                // Ngôn ngữ khác
+                console.log("Chuyển sang ngôn ngữ khác.");
+                $(".hotel_inhidden").hide();
+                $(".hotel_hidden").show();
             }
-            if (newValue < 0)
-                return
-            if (oldValue > 0)
-                $scope.GetAdditionInfoMultiLanguage(oldValue)
-            $scope.SetAdditionInfoMultiLanguage(newValue)
+
+            if (newValue < 0) return;
+
+            if (oldValue > 0 && oldValue !== newValue) {
+                console.log("Lưu thông tin ngôn ngữ cũ:", oldValue);
+                $scope.GetAdditionInfoMultiLanguage(oldValue);
+            }
+
+            console.log("Cập nhật thông tin cho ngôn ngữ mới:", newValue);
+            $scope.SetAdditionInfoMultiLanguage(newValue);
         });
-        
+
+
+
 
         if (CKEDITOR.env.ie && CKEDITOR.env.version < 9)
             CKEDITOR.tools.enableHtml5Elements(document);
@@ -150,6 +201,8 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
             }
         })();
         $scope.initSample()
+        $scope.defaultLogo = ""; // Biến lưu logo mặc định
+
         $scope.GetData = function () {
             $("#loader").css("display", "block")
             $http({
@@ -158,6 +211,8 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
             }).then(function success(response) {
                 $("#loader").css("display", "none")
                 $scope.hotel = response.data
+                // Lưu logo mặc định vào biến defaultLogo
+                $scope.defaultLogo = $scope.hotel.Logo;
                 // Thiết lập mặc định giá trị languageChoose là 0 (Default)
                 $timeout(function () {
                     $scope.languageChoose = 0;

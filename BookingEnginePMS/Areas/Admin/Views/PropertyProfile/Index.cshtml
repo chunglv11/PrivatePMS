@@ -15,14 +15,16 @@
     <div class="uk-width-1-1 uk-margin-medium-bottom">
         <h3>@(transition.Translate(886, "Hotel Profile"))</h3>
     </div>
-    <div class="uk-width-1-1 uk-margin-small-bottom">
+    <div class="uk-width-1-1 uk-margin-small-bottom">4
         <div class="uk-grid uk-margin-small-bottom">
             <div class="uk-width-medium-1-4 uk-text-center">
                 <label style="margin-bottom: 10px;display: block;">
                     <b>@(transition.Translate(928, "Logo"))</b>
                 </label>
-                <img ng-model="hotel.Logo" id="img-logo" ng-src="{{hotel.Logo}}" class="hotel_inhidden"/>
-                <img ng-model="hotel.Logo" id="img-logo" ng-src="{{hotel.Logo}}" class="hotel_hidden"/>
+                @*<img ng-model="hotel.Logo" id="img-logo" ng-src="{{hotel.Logo}}" class="hotel_inhidden" />
+                <img ng-model="hotel.Logo" id="img-logo" ng-src="{{hotel.Logo}}" class="hotel_hidden" />
+                <input ng-model="hotel.Logo" id="Logo" style="display:none;" name="Logo" class="upload">*@
+                <img ng-model="hotel.Logo" id="img-logo" ng-src="{{hotel.Logo}}" />
                 <input ng-model="hotel.Logo" id="Logo" style="display:none;" name="Logo" class="upload">
 
             </div>
@@ -233,7 +235,6 @@
         </div>
     </div>
 </div>
-
 <script>
     $(document).ready(function () {
         if (!$('.button-upload').length > 0) {
