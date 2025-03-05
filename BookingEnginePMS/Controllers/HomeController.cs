@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -2028,6 +2029,17 @@ namespace BookingEnginePMS.Controllers
             if (Session["Params"] != null)
                 param = (ParamsQuery)Session["Params"];
             dataSavePayonline = (DataSavePayonline_Home)Session["dataPayOnline"];
+#if DEBUG
+            VPCRequest conn = new VPCRequest("https://mtf.onepay.vn/paygate/vpcpay.op");
+            ConfigOnePay configOnePay = new ConfigOnePay()
+            {
+                MerchantId = "TESTONEPAY",
+                AccessCode = "6BEB2546",
+                Hashcode = "6D0870CDE5F24F34F3915FB0045120DB",
+                WebSite = "http://localhost:55283"
+            };
+#else
+            VPCRequest conn = new VPCRequest("https://onepay.vn/paygate/vpcpay.op");   // fix /*  */ /*https://onepay.vn/paygate/vpcpay.op*/
             ConfigOnePay configOnePay = new ConfigOnePay();
             using (var connection = DB.ConnectionFactory())
             {
@@ -2042,10 +2054,7 @@ namespace BookingEnginePMS.Controllers
                 configOnePay.Hashcode = configOnePay.Hashcode;
                 configOnePay.WebSite = configOnePay.WebSite;
             }
-            string currency = "VND";
-            System.Web.HttpContext context = System.Web.HttpContext.Current;
-            string ip = VPCRequest.GetLocalIPAddress();
-            VPCRequest conn = new VPCRequest("https://onepay.vn/paygate/vpcpay.op");   // fix /*  */ /*https://onepay.vn/paygate/vpcpay.op*/
+#endif
             conn.SetSecureSecret(configOnePay.Hashcode);
             conn.AddDigitalOrderField("AgainLink", "http://onepay.vn");
             //http://onepay.vn
@@ -2053,19 +2062,22 @@ namespace BookingEnginePMS.Controllers
             conn.AddDigitalOrderField("vpc_Locale", "en");
             conn.AddDigitalOrderField("vpc_Version", "2");
             conn.AddDigitalOrderField("vpc_Command", "pay");
-            conn.AddDigitalOrderField("vpc_Currency", currency);
+            conn.AddDigitalOrderField("vpc_Currency", "VND");
             conn.AddDigitalOrderField("vpc_Merchant", configOnePay.MerchantId);
             conn.AddDigitalOrderField("vpc_AccessCode", configOnePay.AccessCode);
             conn.AddDigitalOrderField("vpc_MerchTxnRef", param.hotelKey + "_" + dataSavePayonline.ReservationId);
             conn.AddDigitalOrderField("vpc_OrderInfo", param.hotelKey + "_" + dataSavePayonline.ReservationId);
             conn.AddDigitalOrderField("vpc_Amount", dataSavePayonline.Deposit.ToString() + "00");
             conn.AddDigitalOrderField("vpc_ReturnURL", configOnePay.WebSite + "/Home/MessageOnePay?email=" + dataSavePayonline.Email);
+            conn.AddDigitalOrderField("vpc_CallbackURL", configOnePay.WebSite + "/Home/IPNOnePay?email=" + dataSavePayonline.Email);
             //configOnePay.WebSite
-            conn.AddDigitalOrderField("vpc_TicketNo", ip);
+            conn.AddDigitalOrderField("vpc_TicketNo", VPCRequest.GetLocalIPAddress());
+            // Cache session để có data xử lý khi IPN OnePay trả về
+            conn.AddDigitalOrderField("user_SessionId", Session.CacheCurrentSession());
             String url = conn.Create3PartyQueryString();
             return Redirect(url);
         }
-        #endregion
+#endregion
 
         #region Pay VTC
         public ActionResult SubmitInvoidVTCPay()
@@ -2144,8 +2156,24 @@ namespace BookingEnginePMS.Controllers
         }
 
         [HttpGet]
+        public ActionResult IPNOnePay(string email, string vpc_OrderInfo, string vpc_TxnResponseCode, string vpc_SecureHash, float vpc_Amount)
+        {
+            Trace.TraceError($"{nameof(HomeController)}.{nameof(IPNOnePay)}[{DateTime.Now}]: {Request.QueryString}");
+            MessageOnePay(email, vpc_OrderInfo, vpc_TxnResponseCode, vpc_SecureHash, vpc_Amount);
+            return Content("responsecode=1&desc=confirm-success");
+        }
+
+        [HttpGet]
         public ActionResult MessageOnePay(string email, string vpc_OrderInfo, string vpc_TxnResponseCode, string vpc_SecureHash, float vpc_Amount)
         {
+            // Khôi phục session đã lưu ở SubmitInvoidOnePay
+            var user_SessionId = Request.Params["user_SessionId"];
+            if (!Session.RestoreSession(user_SessionId))
+            {
+                return RedirectToAction("BookError");
+            }
+            SessionCacheManager.RemoveSession(user_SessionId);
+
             ParamsQuery param = new ParamsQuery();
             DataSavePayonline_Home dataSavePayonline = new DataSavePayonline_Home();
             if (Session["Params"] != null)
