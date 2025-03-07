@@ -2892,7 +2892,7 @@ namespace BookingEnginePMS.Controllers
                         var content = reservationEmailSent.Content.Replace("[Status]", "Confirmed");
                         MailHelper.SendMailGuest(configEmail, allDataBook.guest.Email, reservationEmailSent.Subject + " " + allDataBook.Reference_Number, content,
                                        template.CC.Split(',').ToList(), template.BCC.Split(',').ToList());     
-                        MailHelper.SendMailToHotel(configEmail, template.Content, allDataBook.guest.TypePaymentMethodName);
+                        MailHelper.SendMailToHotel(configEmail, content, allDataBook.guest.TypePaymentMethodName);
                     }
                 }
             }
