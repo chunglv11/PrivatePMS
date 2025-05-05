@@ -2172,7 +2172,7 @@ namespace BookingEnginePMS.Controllers
             {
                 return RedirectToAction("BookError");
             }
-            SessionCacheManager.RemoveSession(user_SessionId);
+            //SessionCacheManager.RemoveSession(user_SessionId);
 
             ParamsQuery param = new ParamsQuery();
             DataSavePayonline_Home dataSavePayonline = new DataSavePayonline_Home();
