@@ -108,6 +108,7 @@ namespace BookingEnginePMS.Helper
                    | SecurityProtocolType.Tls12
                    | SecurityProtocolType.Ssl3;
                 var load = XDocument.Load(@"http://www.vietcombank.com.vn/ExchangeRates/ExrateXML.aspx");
+                //var load = XDocument.Load(@"https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx");
                 var xElement = load.Element("ExrateList");
                 if (xElement != null)
                 {
