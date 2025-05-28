@@ -211,8 +211,8 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
         }
         $scope.ChangePriceSingle = function (event, roomTypeId, index) {
             if (event.keyCode == 13) {
-                // Lưu vị trí cuộn hiện tại
-                var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+				// Lưu vị trí cuộn hiện tại
+				var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
                 $("#loader").css("display", "block")
                 var roomtype = $scope.data.find(x => x.RoomTypeId == roomTypeId);
                 var rateAvailability = roomtype.RateAvailabilities[index]
@@ -243,15 +243,16 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                     $("#loader").css("display", "none")
                     $scope.GetData()
                     notify.success("Thành công")
-                    // Khôi phục vị trí cuộn sau khi hoàn tất
-                    setTimeout(function () {
-                        window.scrollTo(0, scrollPosition);
-                    }, 100); 
+					// Khôi phục vị trí cuộn sau khi hoàn tất
+					setTimeout(function () {
+						window.scrollTo(0, scrollPosition);
+					}, 100); 
                 }, function error(response) {
                     $("#loader").css("display", "none")
                     notify.error("Có lỗi sảy ra")
-                    // Khôi phục vị trí cuộn ngay cả khi có lỗi
-                    window.scrollTo(0, scrollPosition);
+					  // Khôi phục vị trí cuộn ngay cả khi có lỗi
+					  window.scrollTo(0, scrollPosition);
+
                 });
                 return;
             }

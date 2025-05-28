@@ -45,7 +45,6 @@ var urlGetReservationForClusters = "/Admin/Reservation/GetReservationForClusters
 var urlPostGroupClusters = "/Admin/Reservation/PostGroupClusters"
 //thêm
 var urlCancelStatusBook = "/Admin/Reservation/CancelStatusBook"
-
 app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'validate', 'notify', 'helper', '$timeout', '$interval',
     function ($scope, $http, $log, uiGridConstants, validate, notify, helper, $timeout, $interval) {
         //#region general
@@ -67,7 +66,6 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
         $scope.getTypeReservation = function (type) {
             return typeReservation[type]
         }
-        
         $scope.getNumberBookingForFilter = function () {
             $scope.numberBookingNew = $scope.getNumberBookingByStatus(1)
             $scope.numberBookingInHouse = $scope.getNumberBookingByStatus(2)
@@ -191,16 +189,16 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
             });
         }
         $scope.PutService = function () {
-             // Kiểm tra nếu có bất kỳ dịch vụ nào chưa chọn phòng (BookingId = -1)
-            var invalidService = $scope.serviceChoose.some(function (service) {
-                return service.BookingId === -1;
-            });
+			 // Kiểm tra nếu có bất kỳ dịch vụ nào chưa chọn phòng (BookingId = -1)
+			var invalidService = $scope.serviceChoose.some(function (service) {
+				return service.BookingId === -1;
+			});
 
-            // Nếu có dịch vụ với BookingId = -1, thông báo và dừng hàm
-            if (invalidService) {
-                notify.error("Vui lòng chọn phòng cho tất cả các dịch vụ.");
-                return;
-            }
+			// Nếu có dịch vụ với BookingId = -1, thông báo và dừng hàm
+			if (invalidService) {
+				notify.error("Vui lòng chọn phòng cho tất cả các dịch vụ.");
+				return;
+			}
             $("#loader").css("display", "block")
             $http({
                 url: urlPutService,
@@ -539,10 +537,9 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 }
             }
             UIkit.modal("#ModalScheduleService").tryhide()
-            $("#loader").css("display", "none");
-            notify.success("Thành công");
+			 $("#loader").css("display", "none");
+			 notify.success("Thành công");
         }
-
         $scope.ConfirmSelectExtrabed = function () {
             if ($scope.bookingdetail.BookingExtrabeds != null && $scope.bookingdetail.BookingExtrabeds.length > 0) {
                 for (var i = 0; i < $scope.bookingdetail.BookingExtrabeds.length; i++) {
@@ -689,30 +686,29 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                 notify.error("Có lỗi sảy ra!")
             });
         }
-        //thêm
-        $scope.CancelStatusBook = function (ReservationId) {
-            // Hiển thị modal xác nhận
-            UIkit.modal("#ModalCancelBook").show();
-            $scope.ConfirmCancelBook = function () {
-                $("#loader").css("display", "block");
-                $http({
-                    url: urlCancelStatusBook,
-                    method: 'POST',
-                    data: {
-                        ReservationId: ReservationId
-                    }
-                }).then(function success(response) {
-                    $("#loader").css("display", "none");
-                    notify.success("Thành công");
-                    UIkit.modal("#ModalCancelBook").tryhide()
-                    $scope.GetBooking()
-                }, function error(response) {
-                    $("#loader").css("display", "none");
-                    notify.error("Có lỗi sảy ra!");
-                });
-            }
-        }
-
+		//thêm
+		$scope.CancelStatusBook = function (ReservationId) {
+			// Hiển thị modal xác nhận
+			UIkit.modal("#ModalCancelBook").show();
+			$scope.ConfirmCancelBook = function () {
+				$("#loader").css("display", "block");
+				$http({
+					url: urlCancelStatusBook,
+					method: 'POST',
+					data: {
+						ReservationId: ReservationId
+					}
+				}).then(function success(response) {
+					$("#loader").css("display", "none");
+					notify.success("Thành công");
+					UIkit.modal("#ModalCancelBook").tryhide()
+					$scope.GetBooking()
+				}, function error(response) {
+					$("#loader").css("display", "none");
+					notify.error("Có lỗi sảy ra!");
+				});
+			}
+		}
         $scope.payBeforCheckout = 0;
         $scope.ConfirmCheckOut = function () {
             UIkit.modal("#ModalCheckOut").show()

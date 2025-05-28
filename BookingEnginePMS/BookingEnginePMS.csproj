@@ -2235,6 +2235,7 @@
     <Content Include="Areas\Admin\Views\Voucher\Index.cshtml" />
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\PropertyProfile\index_back.zip" />
     <None Include="packages.config" />
     <Content Include="Views\Home\SelectDate.cshtml" />
     <Content Include="Views\PartialView\pInfoCompany.cshtml" />
