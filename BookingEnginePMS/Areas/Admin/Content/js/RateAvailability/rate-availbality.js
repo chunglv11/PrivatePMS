@@ -243,10 +243,19 @@ app.controller('controller', ['$scope', '$http', '$log', 'uiGridConstants', 'val
                     $("#loader").css("display", "none")
                     $scope.GetData()
                     notify.success("Thành công")
-					// Khôi phục vị trí cuộn sau khi hoàn tất
-					setTimeout(function () {
-						window.scrollTo(0, scrollPosition);
-					}, 100); 
+                    // Khôi phục vị trí cuộn sau khi hoàn tất
+                    
+      //              setTimeout(function () {
+      //                  console.log("scrolling to", scrollPosition)
+						//window.scrollTo(0, scrollPosition);
+      //              }, 7000); 
+                    setTimeout(function () {
+                        window.scrollTo({
+                            top: scrollPosition,
+                            behavior: "smooth"
+                        });
+                    }, 700);
+
                 }, function error(response) {
                     $("#loader").css("display", "none")
                     notify.error("Có lỗi sảy ra")
